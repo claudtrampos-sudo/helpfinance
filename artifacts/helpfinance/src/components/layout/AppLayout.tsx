@@ -52,13 +52,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-[100dvh] flex bg-background">
       {/* Barra lateral (desktop) */}
       <aside className="hidden md:flex w-64 flex-col border-r bg-card/50 backdrop-blur-xl">
-        <div className="p-6 flex items-center gap-3">
-          <div className="bg-primary/20 p-2 rounded-xl">
-            <Wallet className="h-6 w-6 text-primary" />
+        <div className="px-6 pt-6 pb-4">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-primary/20 p-2 rounded-xl">
+              <Wallet className="h-6 w-6 text-primary" />
+            </div>
+            <span className="font-display font-bold text-xl tracking-tight text-foreground">
+              HelpFinance
+            </span>
           </div>
-          <span className="font-display font-bold text-xl tracking-tight text-foreground">
-            HelpFinance
-          </span>
+          <p className="text-xs text-muted-foreground leading-snug pl-1">
+            Seu dinheiro sob controle,<br />de forma inteligente.
+          </p>
         </div>
         <nav className="flex-1 px-4 space-y-2">
           <NavLinks />

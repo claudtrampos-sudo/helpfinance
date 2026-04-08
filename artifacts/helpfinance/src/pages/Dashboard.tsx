@@ -39,7 +39,7 @@ export default function Dashboard() {
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
             Bem-vindo de volta!
           </h1>
-          <p className="text-muted-foreground mt-1">Veja o que está acontecendo com o seu dinheiro.</p>
+          <p className="text-muted-foreground mt-1">Seu dinheiro sob controle, de forma inteligente.</p>
         </div>
         <Link href="/transactions">
           <Button className="rounded-full shadow-lg shadow-primary/20">Adicionar Transação</Button>
