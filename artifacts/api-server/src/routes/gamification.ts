@@ -21,7 +21,6 @@ const LEVEL_NAMES = [
   "Poupador",
   "Orçamentista",
   "Investidor",
-  "Construtor de Riqueza",
   "Especialista Financeiro",
 ];
 
