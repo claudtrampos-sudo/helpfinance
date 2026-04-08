@@ -2,7 +2,7 @@ import { useListGoals, useCreateGoal, useUpdateGoal, getListGoalsQueryKey, useLi
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency, formatDate, translateCategory } from "@/lib/format";
 import { Target, Plus, TrendingUp } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -123,7 +123,7 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
                     </FormControl>
                     <SelectContent>
                       {categories?.filter(c => c.type !== "income").map(c => (
-                        <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
+                        <SelectItem key={c.id} value={c.name}>{translateCategory(c.name)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

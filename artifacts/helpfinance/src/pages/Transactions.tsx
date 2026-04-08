@@ -141,7 +141,7 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
                     </FormControl>
                     <SelectContent>
                       {categories?.filter(c => c.type === selectedType || c.type === "both").map(c => (
-                        <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
+                        <SelectItem key={c.id} value={c.name}>{translateCategory(c.name)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -234,6 +234,12 @@ export default function Transactions() {
                 <SelectItem value="expense">Despesas</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Cabeçalho das colunas */}
+          <div className="hidden md:flex items-center justify-between px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b mb-2">
+            <span>Transação</span>
+            <span>Valor</span>
           </div>
 
           <div className="space-y-4">
