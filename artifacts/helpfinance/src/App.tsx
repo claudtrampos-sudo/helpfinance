@@ -1,4 +1,5 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
+import LandingPage from "@/pages/LandingPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,16 +16,19 @@ const queryClient = new QueryClient();
 
 function Router() {
   return (
-    <AppLayout>
-      <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/transactions" component={Transactions} />
-        <Route path="/goals" component={Goals} />
-        <Route path="/gamification" component={Gamification} />
-        <Route path="/ai-chat" component={AiChat} />
-        <Route component={NotFound} />
-      </Switch>
-    </AppLayout>
+    <Switch>
+      <Route path="/" component={LandingPage} />
+      <AppLayout>
+        <Switch>
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/transactions" component={Transactions} />
+          <Route path="/goals" component={Goals} />
+          <Route path="/gamification" component={Gamification} />
+          <Route path="/ai-chat" component={AiChat} />
+          <Route component={NotFound} />
+        </Switch>
+      </AppLayout>
+    </Switch>
   );
 }
 

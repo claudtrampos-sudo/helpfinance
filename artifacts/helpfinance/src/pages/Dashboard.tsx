@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { formatCurrency, translateCategory } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { ArrowUpRight, ArrowDownRight, Lightbulb, PiggyBank, Target, Wallet, Activity } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, ArrowLeft, Lightbulb, PiggyBank, Target, Wallet, Activity } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 
@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col gap-2"><Link href="/"><button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"><ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" /><span>Voltar para a página inicial</span></button></Link><div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
             Bem-vindo de volta!
