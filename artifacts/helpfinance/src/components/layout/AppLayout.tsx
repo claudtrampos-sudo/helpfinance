@@ -52,12 +52,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-[100dvh] flex bg-background">
       {/* Barra lateral (desktop) */}
       <aside className="hidden md:flex w-64 flex-col border-r bg-card/50 backdrop-blur-xl">
-        <div className="px-6 pt-6 pb-4">
+        <div className="px-6 pt-6 pb-5 border-b border-border/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-primary/20 p-2 rounded-xl">
-              <Wallet className="h-6 w-6 text-primary" />
+            <div className="bg-gradient-to-br from-primary to-blue-500 p-2 rounded-xl shadow-md shadow-primary/30">
+              <Wallet className="h-6 w-6 text-white" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight text-foreground">
+            <span className="font-display font-extrabold text-2xl tracking-tight bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
               HelpFinance
             </span>
           </div>
@@ -74,8 +74,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col max-h-[100dvh]">
         <header className="md:hidden flex items-center justify-between p-4 border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
           <div className="flex items-center gap-2">
-            <Wallet className="h-6 w-6 text-primary" />
-            <span className="font-display font-bold text-lg">HelpFinance</span>
+            <div className="bg-gradient-to-br from-primary to-blue-500 p-1.5 rounded-lg shadow-sm shadow-primary/30">
+              <Wallet className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-display font-extrabold text-xl tracking-tight bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
+              HelpFinance
+            </span>
           </div>
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
