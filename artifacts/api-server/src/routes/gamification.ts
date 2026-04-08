@@ -4,16 +4,16 @@ import { db, userProfileTable, userBadgesTable } from "@workspace/db";
 const router = Router();
 
 const ALL_BADGES = [
-  { id: "first_transaction", name: "Primeiro Passo", description: "Adicione sua primeira transação", icon: "Star", xpReward: 50 },
-  { id: "week_streak", name: "Guerreiro Semanal", description: "Mantenha uma sequência de 7 dias", icon: "Flame", xpReward: 100 },
-  { id: "month_streak", name: "Mestre Mensal", description: "Mantenha uma sequência de 30 dias", icon: "Trophy", xpReward: 500 },
-  { id: "saver_100", name: "Poupador Inteligente", description: "Poupe R$ 100 em um único mês", icon: "PiggyBank", xpReward: 200 },
-  { id: "goal_created", name: "Sonhador Realizador", description: "Defina sua primeira meta financeira", icon: "Target", xpReward: 75 },
-  { id: "goal_completed", name: "Conquistador de Metas", description: "Conclua uma meta financeira", icon: "Award", xpReward: 300 },
-  { id: "budget_master", name: "Mestre do Orçamento", description: "Fique abaixo do orçamento por 3 meses", icon: "ShieldCheck", xpReward: 250 },
-  { id: "investor", name: "Investidor", description: "Registre uma receita de investimento", icon: "TrendingUp", xpReward: 150 },
-  { id: "expense_tracker_10", name: "Atento aos Detalhes", description: "Registre 10 transações", icon: "ClipboardList", xpReward: 100 },
-  { id: "expense_tracker_50", name: "Entusiasta Financeiro", description: "Registre 50 transações", icon: "BarChart2", xpReward: 300 },
+  { id: "first_transaction", name: "Primeiros Passos", description: "Você registrou sua primeira transação. A jornada começa aqui!", icon: "Star", xpReward: 50 },
+  { id: "week_streak", name: "Primeira Semana Controlando Gastos", description: "7 dias consecutivos de acompanhamento. Continue assim!", icon: "Flame", xpReward: 100 },
+  { id: "month_streak", name: "Um Mês de Controle Total", description: "30 dias seguidos de disciplina financeira. Incrível!", icon: "Trophy", xpReward: 500 },
+  { id: "saver_100", name: "Poupando com Inteligência", description: "Economizou R$ 100 em um único mês. Seu futuro agradece!", icon: "PiggyBank", xpReward: 200 },
+  { id: "goal_created", name: "Sonhe Grande!", description: "Definiu sua primeira meta financeira. Todo sonho começa com um plano.", icon: "Target", xpReward: 75 },
+  { id: "goal_completed", name: "Meta Atingida!", description: "Parabéns! Você cumpriu uma meta financeira do início ao fim.", icon: "Award", xpReward: 300 },
+  { id: "budget_master", name: "Sem Gastos Desnecessários", description: "Ficou dentro do orçamento por 3 meses seguidos. Disciplina exemplar!", icon: "ShieldCheck", xpReward: 250 },
+  { id: "investor", name: "Modo Investidor Ativado", description: "Registrou sua primeira receita de investimento. O dinheiro trabalhando por você!", icon: "TrendingUp", xpReward: 150 },
+  { id: "expense_tracker_10", name: "Atento aos Detalhes", description: "Registrou 10 transações. Quem controla, prospera!", icon: "ClipboardList", xpReward: 100 },
+  { id: "expense_tracker_50", name: "Mestre das Finanças", description: "50 transações registradas. Você domina o seu dinheiro!", icon: "BarChart2", xpReward: 300 },
 ];
 
 const LEVEL_NAMES = [
