@@ -45,6 +45,7 @@ export default function Dashboard() {
           <Button className="rounded-full shadow-lg shadow-primary/20">Adicionar Transação</Button>
         </Link>
       </div>
+        </div>
 
       {summary && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
