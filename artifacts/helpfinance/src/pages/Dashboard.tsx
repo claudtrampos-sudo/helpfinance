@@ -48,7 +48,7 @@ export default function Dashboard() {
 
       {summary && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-none shadow-md bg-gradient-to-br from-primary/10 to-transparent">
+          <Card className="border-none shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 bg-gradient-to-br from-primary/10 to-transparent cursor-default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="bg-primary/20 p-3 rounded-2xl">
@@ -64,7 +64,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
           
-          <Card className="border-none shadow-md">
+          <Card className="border-none shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 cursor-default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="bg-emerald-500/10 p-3 rounded-2xl">
@@ -80,7 +80,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-none shadow-md">
+          <Card className="border-none shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 cursor-default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="bg-rose-500/10 p-3 rounded-2xl">
@@ -96,7 +96,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-none shadow-md bg-gradient-to-br from-blue-500/10 to-transparent">
+          <Card className="border-none shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 bg-gradient-to-br from-blue-500/10 to-transparent cursor-default">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="bg-blue-500/20 p-3 rounded-2xl">

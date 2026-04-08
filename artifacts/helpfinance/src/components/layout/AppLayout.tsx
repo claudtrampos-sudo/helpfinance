@@ -6,7 +6,8 @@ import {
   Trophy, 
   Target,
   Menu,
-  Wallet
+  Wallet,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -65,9 +66,21 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             Seu dinheiro sob controle,<br />de forma inteligente.
           </p>
         </div>
-        <nav className="flex-1 px-4 space-y-2">
+        <nav className="flex-1 px-4 py-4 space-y-2">
           <NavLinks />
         </nav>
+        <div className="px-4 pb-6">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 border border-border/40">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm shadow-primary/20">
+              JS
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-foreground truncate">João Silva</p>
+              <p className="text-xs text-muted-foreground truncate">joao@email.com</p>
+            </div>
+            <User className="h-4 w-4 text-muted-foreground shrink-0 ml-auto" />
+          </div>
+        </div>
       </aside>
 
       {/* Navegação mobile e conteúdo principal */}

@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency, formatDate, translateCategory } from "@/lib/format";
 import { Target, Plus, TrendingUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -156,6 +156,30 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
   );
 }
 
+function AnimatedProgressBar({ progress, color }: { progress: number; color: string }) {
+  const [width, setWidth] = useState(0);
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      const timer = setTimeout(() => setWidth(progress), 80);
+      return () => clearTimeout(timer);
+    } else {
+      setWidth(progress);
+    }
+  }, [progress]);
+
+  return (
+    <div className="h-2 w-full rounded-full overflow-hidden" style={{ backgroundColor: `${color}20` }}>
+      <div
+        className="h-full rounded-full transition-all duration-1000 ease-out"
+        style={{ width: `${width}%`, backgroundColor: color }}
+      />
+    </div>
+  );
+}
+
 export default function Goals() {
   const { data: goals, isLoading } = useListGoals();
   const updateGoal = useUpdateGoal();
@@ -192,9 +216,9 @@ export default function Goals() {
             const progress = Math.min(100, Math.round((goal.currentAmount / goal.targetAmount) * 100));
             const isCompleted = progress >= 100;
             return (
-              <Card key={goal.id} className={`border-none shadow-md overflow-hidden relative ${isCompleted ? 'bg-primary/5' : ''}`}>
-                <div className="h-2 w-full" style={{ backgroundColor: `${goal.color}20` }}>
-                  <div className="h-full transition-all duration-1000 ease-out" style={{ width: `${progress}%`, backgroundColor: goal.color }} />
+              <Card key={goal.id} className={`border-none shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden relative ${isCompleted ? 'bg-primary/5' : ''}`}>
+                <div className="px-6 pt-5 pb-0">
+                  <AnimatedProgressBar progress={progress} color={goal.color} />
                 </div>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
