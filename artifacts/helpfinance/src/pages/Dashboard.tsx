@@ -72,7 +72,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-sm font-medium text-muted-foreground">Receita Mensal</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Ganho</p>
                 <h3 className="text-2xl font-display font-bold text-foreground mt-1">
                   {formatCurrency(summary.monthlyIncome)}
                 </h3>
@@ -88,7 +88,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-sm font-medium text-muted-foreground">Gastos Mensais</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Gasto</p>
                 <h3 className="text-2xl font-display font-bold text-foreground mt-1">
                   {formatCurrency(summary.monthlyExpenses)}
                 </h3>
@@ -107,7 +107,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-sm font-medium text-muted-foreground">Poupança</p>
+                <p className="text-sm font-medium text-muted-foreground">Economia</p>
                 <h3 className="text-2xl font-display font-bold text-foreground mt-1">
                   {formatCurrency(summary.monthlyIncome - summary.monthlyExpenses)}
                 </h3>
