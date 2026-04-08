@@ -13,11 +13,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/transactions", label: "Transactions", icon: ArrowLeftRight },
-  { href: "/goals", label: "Goals", icon: Target },
-  { href: "/gamification", label: "Gamification", icon: Trophy },
-  { href: "/ai-chat", label: "AI Coach", icon: MessageSquare },
+  { href: "/", label: "Painel", icon: LayoutDashboard },
+  { href: "/transactions", label: "Transações", icon: ArrowLeftRight },
+  { href: "/goals", label: "Metas", icon: Target },
+  { href: "/gamification", label: "Conquistas", icon: Trophy },
+  { href: "/ai-chat", label: "Assistente IA", icon: MessageSquare },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -50,7 +50,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] flex bg-background">
-      {/* Desktop Sidebar */}
+      {/* Barra lateral (desktop) */}
       <aside className="hidden md:flex w-64 flex-col border-r bg-card/50 backdrop-blur-xl">
         <div className="p-6 flex items-center gap-3">
           <div className="bg-primary/20 p-2 rounded-xl">
@@ -65,7 +65,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </nav>
       </aside>
 
-      {/* Mobile Nav & Main Content */}
+      {/* Navegação mobile e conteúdo principal */}
       <div className="flex-1 flex flex-col max-h-[100dvh]">
         <header className="md:hidden flex items-center justify-between p-4 border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
           <div className="flex items-center gap-2">

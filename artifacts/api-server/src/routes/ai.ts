@@ -7,7 +7,7 @@ const router = Router();
 router.post("/chat", async (req, res) => {
   const body = AiChatBody.safeParse(req.body);
   if (!body.success) {
-    res.status(400).json({ error: "Invalid body" });
+    res.status(400).json({ error: "Dados inválidos" });
     return;
   }
 
@@ -28,38 +28,47 @@ router.post("/chat", async (req, res) => {
   }
   const topCategory = Object.entries(expenseByCategory).sort((a, b) => b[1] - a[1])[0];
 
+  const formatBRL = (val: number) =>
+    val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
   let reply = "";
   let suggestions: string[] = [];
 
-  if (message.includes("spend") || message.includes("expense") || message.includes("spent")) {
-    reply = `This month you've spent **$${monthlyExpenses.toFixed(2)}** across ${Object.keys(expenseByCategory).length} categories. ${topCategory ? `Your biggest expense is **${topCategory[0]}** at $${topCategory[1].toFixed(2)}.` : ""} ${savingsRate < 0 ? "You're currently spending more than you earn — let's look at ways to reduce expenses!" : `You're saving ${savingsRate.toFixed(1)}% of your income, which is ${savingsRate > 20 ? "excellent" : savingsRate > 10 ? "good" : "a start"}.`}`;
-    suggestions = ["Where can I cut expenses?", "Show my income this month", "How's my savings rate?"];
-  } else if (message.includes("save") || message.includes("saving") || message.includes("cut")) {
+  const hasSpend = message.includes("gast") || message.includes("desp") || message.includes("spend") || message.includes("spent");
+  const hasSave = message.includes("econom") || message.includes("poupar") || message.includes("save") || message.includes("cut") || message.includes("reduz");
+  const hasIncome = message.includes("receita") || message.includes("salário") || message.includes("ganho") || message.includes("income") || message.includes("earn");
+  const hasBalance = message.includes("saldo") || message.includes("total") || message.includes("balanço") || message.includes("balance");
+  const hasTrack = message.includes("caminho") || message.includes("meta") || message.includes("goal") || message.includes("track") || message.includes("on track");
+
+  if (hasSpend) {
+    reply = `Este mês você gastou **${formatBRL(monthlyExpenses)}** em ${Object.keys(expenseByCategory).length} categorias. ${topCategory ? `Seu maior gasto é em **${topCategory[0]}**, com ${formatBRL(topCategory[1])}.` : ""} ${savingsRate < 0 ? "Você está gastando mais do que ganha — vamos analisar como reduzir as despesas!" : `Sua taxa de economia é de ${savingsRate.toFixed(1)}%, o que é ${savingsRate > 20 ? "excelente" : savingsRate > 10 ? "bom" : "um começo"}.`}`;
+    suggestions = ["Onde posso economizar?", "Mostre minha receita do mês", "Como está minha taxa de poupança?"];
+  } else if (hasSave) {
     const cutTips: string[] = [];
     for (const [cat, amount] of Object.entries(expenseByCategory).sort((a, b) => b[1] - a[1]).slice(0, 3)) {
-      cutTips.push(`• **${cat}**: $${amount.toFixed(2)} — try reducing by 10-15%`);
+      cutTips.push(`• **${cat}**: ${formatBRL(amount)} — tente reduzir de 10 a 15%`);
     }
-    reply = `Here are your top spending areas where you could save money:\n\n${cutTips.join("\n")}\n\nReducing these by just 10% could save you **$${(monthlyExpenses * 0.1).toFixed(2)}** per month — that's **$${(monthlyExpenses * 0.1 * 12).toFixed(2)}** per year!`;
-    suggestions = ["How much did I spend this month?", "Set a savings goal", "What's my balance?"];
-  } else if (message.includes("income") || message.includes("earn")) {
-    reply = `Your total income this month is **$${monthlyIncome.toFixed(2)}**. ${savings >= 0 ? `After expenses of $${monthlyExpenses.toFixed(2)}, you have **$${savings.toFixed(2)}** left to save or invest.` : `Unfortunately your expenses ($${monthlyExpenses.toFixed(2)}) exceed your income this month.`}`;
-    suggestions = ["How much did I spend?", "What are my biggest expenses?", "Am I on track?"];
-  } else if (message.includes("balance") || message.includes("net worth") || message.includes("total")) {
+    reply = `Aqui estão suas principais categorias de gastos onde você pode economizar:\n\n${cutTips.join("\n")}\n\nReduzir apenas 10% nessas categorias pode te economizar **${formatBRL(monthlyExpenses * 0.1)}** por mês — ou seja, **${formatBRL(monthlyExpenses * 0.1 * 12)}** por ano!`;
+    suggestions = ["Quanto gastei este mês?", "Definir uma meta de economia", "Qual é meu saldo?"];
+  } else if (hasIncome) {
+    reply = `Sua receita total este mês é de **${formatBRL(monthlyIncome)}**. ${savings >= 0 ? `Após as despesas de ${formatBRL(monthlyExpenses)}, você tem **${formatBRL(savings)}** disponíveis para poupar ou investir.` : `Infelizmente suas despesas (${formatBRL(monthlyExpenses)}) ultrapassaram sua receita este mês.`}`;
+    suggestions = ["Quanto gastei este mês?", "Quais são meus maiores gastos?", "Estou no caminho certo?"];
+  } else if (hasBalance) {
     const totalIncome = allTx.filter((t) => t.type === "income").reduce((s, t) => s + parseFloat(t.amount), 0);
     const totalExpenses = allTx.filter((t) => t.type === "expense").reduce((s, t) => s + parseFloat(t.amount), 0);
     const totalBalance = totalIncome - totalExpenses;
-    reply = `Your current total balance is **$${totalBalance.toFixed(2)}**. This month you earned $${monthlyIncome.toFixed(2)} and spent $${monthlyExpenses.toFixed(2)}.`;
-    suggestions = ["How can I grow my savings?", "What are my biggest expenses?", "Set a financial goal"];
-  } else if (message.includes("track") || message.includes("goal") || message.includes("on track")) {
-    reply = `${savingsRate > 0 ? `You're saving ${savingsRate.toFixed(1)}% of your income this month — ${savingsRate > 20 ? "you're well on track! Consider increasing your investment contributions." : savingsRate > 10 ? "you're on the right path. Try to push towards a 20% savings rate." : "it's a start, but there's room to improve. Aim for 10-20% savings rate."}` : "Your expenses are exceeding your income this month. Let's work on getting back on track!"}`;
-    suggestions = ["Where can I save money?", "Show spending breakdown", "Set a new goal"];
+    reply = `Seu saldo total atual é de **${formatBRL(totalBalance)}**. Este mês você recebeu ${formatBRL(monthlyIncome)} e gastou ${formatBRL(monthlyExpenses)}.`;
+    suggestions = ["Como aumentar minha poupança?", "Quais são meus maiores gastos?", "Criar uma meta financeira"];
+  } else if (hasTrack) {
+    reply = `${savingsRate > 0 ? `Você está poupando ${savingsRate.toFixed(1)}% da sua receita este mês — ${savingsRate > 20 ? "você está muito bem! Considere aumentar seus investimentos." : savingsRate > 10 ? "você está no caminho certo. Tente chegar a 20% de poupança." : "é um começo, mas há espaço para melhorar. Busque poupar entre 10% e 20% da renda."}` : "Suas despesas estão superando sua receita este mês. Vamos trabalhar para volcar aos trilhos!"}`;
+    suggestions = ["Onde posso economizar?", "Resumo de gastos por categoria", "Criar uma nova meta"];
   } else {
-    reply = `Hi! I'm your HelpFinance AI assistant. This month you've earned **$${monthlyIncome.toFixed(2)}** and spent **$${monthlyExpenses.toFixed(2)}**, ${savings >= 0 ? `leaving you with **$${savings.toFixed(2)}** in savings` : "spending more than you earned"}. How can I help you improve your finances?`;
+    reply = `Olá! Sou seu Assistente Financeiro HelpFinance. Este mês você recebeu **${formatBRL(monthlyIncome)}** e gastou **${formatBRL(monthlyExpenses)}**, ${savings >= 0 ? `sobrando **${formatBRL(savings)}** de poupança` : "gastando mais do que recebeu"}. Como posso ajudá-lo a melhorar suas finanças?`;
     suggestions = [
-      "How much did I spend this month?",
-      "Where can I save money?",
-      "Am I on track with my goals?",
-      "What's my biggest expense?",
+      "Quanto gastei este mês?",
+      "Onde posso economizar dinheiro?",
+      "Estou no caminho certo com minhas metas?",
+      "Qual é meu maior gasto?",
     ];
   }
 

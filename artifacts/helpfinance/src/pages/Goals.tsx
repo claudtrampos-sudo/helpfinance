@@ -1,8 +1,7 @@
 import { useListGoals, useCreateGoal, useUpdateGoal, getListGoalsQueryKey, useListCategories } from "@workspace/api-client-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { Target, Plus, TrendingUp } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,11 +16,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const goalSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  targetAmount: z.coerce.number().positive("Target must be positive"),
-  currentAmount: z.coerce.number().min(0, "Current amount must be non-negative"),
+  title: z.string().min(1, "Nome é obrigatório"),
+  targetAmount: z.coerce.number().positive("O valor alvo deve ser positivo"),
+  currentAmount: z.coerce.number().min(0, "O valor atual não pode ser negativo"),
   deadline: z.string().optional().nullable(),
-  category: z.string().min(1, "Category is required"),
+  category: z.string().min(1, "Categoria é obrigatória"),
 });
 
 function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o: boolean) => void }) {
@@ -42,7 +41,6 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
   });
 
   const onSubmit = (values: z.infer<typeof goalSchema>) => {
-    // Generate a color and icon based on category or random for now
     const selectedCat = categories?.find(c => c.name === values.category);
     createGoal.mutate({ 
       data: { 
@@ -53,7 +51,7 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
     }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListGoalsQueryKey() });
-        toast({ title: "Goal created!" });
+        toast({ title: "Meta criada com sucesso!" });
         onOpenChange(false);
         form.reset();
       }
@@ -64,7 +62,7 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Financial Goal</DialogTitle>
+          <DialogTitle>Criar Meta Financeira</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -73,9 +71,9 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Goal Name</FormLabel>
+                  <FormLabel>Nome da Meta</FormLabel>
                   <FormControl>
-                    <Input placeholder="Emergency Fund, New Car..." {...field} />
+                    <Input placeholder="Ex.: Reserva de Emergência, Carro Novo..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -88,7 +86,7 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
                 name="targetAmount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Target Amount</FormLabel>
+                    <FormLabel>Valor Alvo (R$)</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" {...field} />
                     </FormControl>
@@ -101,7 +99,7 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
                 name="currentAmount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Starting Amount</FormLabel>
+                    <FormLabel>Valor Inicial (R$)</FormLabel>
                     <FormControl>
                       <Input type="number" step="0.01" {...field} />
                     </FormControl>
@@ -116,11 +114,11 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>Categoria</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Selecione a categoria" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -139,7 +137,7 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
               name="deadline"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Deadline (Optional)</FormLabel>
+                  <FormLabel>Prazo (Opcional)</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} value={field.value || ""} />
                   </FormControl>
@@ -149,7 +147,7 @@ function AddGoalDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o
             />
             
             <Button type="submit" className="w-full" disabled={createGoal.isPending}>
-              {createGoal.isPending ? "Creating..." : "Create Goal"}
+              {createGoal.isPending ? "Criando..." : "Criar Meta"}
             </Button>
           </form>
         </Form>
@@ -169,7 +167,7 @@ export default function Goals() {
     updateGoal.mutate({ id, data: { currentAmount: current + amount } }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListGoalsQueryKey() });
-        toast({ title: "Progress updated! Keep it up! 🎉" });
+        toast({ title: "Progresso atualizado! Continue assim!" });
       }
     });
   };
@@ -178,11 +176,11 @@ export default function Goals() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold">Financial Goals</h1>
-          <p className="text-muted-foreground mt-1">Track your progress towards what matters.</p>
+          <h1 className="text-3xl md:text-4xl font-display font-bold">Metas Financeiras</h1>
+          <p className="text-muted-foreground mt-1">Acompanhe seu progresso rumo ao que importa.</p>
         </div>
         <Button onClick={() => setIsAddOpen(true)} className="rounded-full shadow-lg shadow-primary/20">
-          <Plus className="h-4 w-4 mr-2" /> New Goal
+          <Plus className="h-4 w-4 mr-2" /> Nova Meta
         </Button>
       </div>
 
@@ -211,17 +209,17 @@ export default function Goals() {
                   <h3 className="text-xl font-bold font-display mb-1">{goal.title}</h3>
                   {goal.deadline && (
                     <p className="text-sm text-muted-foreground mb-4">
-                      Target: {formatDate(goal.deadline)}
+                      Prazo: {formatDate(goal.deadline)}
                     </p>
                   )}
                   
                   <div className="space-y-1 mb-6 mt-4">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Current</span>
+                      <span className="text-muted-foreground">Atual</span>
                       <span className="font-bold">{formatCurrency(goal.currentAmount)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Target</span>
+                      <span className="text-muted-foreground">Alvo</span>
                       <span className="font-bold text-muted-foreground">{formatCurrency(goal.targetAmount)}</span>
                     </div>
                   </div>
@@ -230,14 +228,14 @@ export default function Goals() {
                     <Button 
                       variant="outline" 
                       className="w-full"
-                      onClick={() => handleAddFunds(goal.id, goal.currentAmount, 50)} // Example +$50 bump
+                      onClick={() => handleAddFunds(goal.id, goal.currentAmount, 50)}
                     >
-                      <TrendingUp className="h-4 w-4 mr-2" /> Add $50
+                      <TrendingUp className="h-4 w-4 mr-2" /> Adicionar R$ 50
                     </Button>
                   )}
                   {isCompleted && (
                     <div className="w-full text-center p-2 bg-primary/10 text-primary font-bold rounded-md">
-                      Goal Reached! 🎉
+                      Meta Atingida!
                     </div>
                   )}
                 </CardContent>
@@ -247,8 +245,8 @@ export default function Goals() {
         ) : (
           <div className="col-span-full text-center py-12 text-muted-foreground bg-card rounded-xl border border-dashed">
             <Target className="h-12 w-12 mx-auto mb-4 opacity-20" />
-            <p>You haven't set any goals yet.</p>
-            <Button variant="link" onClick={() => setIsAddOpen(true)}>Create your first goal</Button>
+            <p>Você ainda não definiu nenhuma meta.</p>
+            <Button variant="link" onClick={() => setIsAddOpen(true)}>Crie sua primeira meta</Button>
           </div>
         )}
       </div>

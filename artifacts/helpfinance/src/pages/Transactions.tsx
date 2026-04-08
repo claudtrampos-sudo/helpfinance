@@ -5,9 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatCurrency, formatDate, translateCategory } from "@/lib/format";
 import { ArrowUpRight, ArrowDownRight, Search, Plus, Trash2, CalendarClock } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,14 +17,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
 const transactionSchema = z.object({
-  description: z.string().min(1, "Description is required"),
-  amount: z.coerce.number().positive("Amount must be positive"),
+  description: z.string().min(1, "Descrição é obrigatória"),
+  amount: z.coerce.number().positive("O valor deve ser positivo"),
   type: z.enum(["income", "expense"]),
-  category: z.string().min(1, "Category is required"),
-  date: z.string().min(1, "Date is required"),
+  category: z.string().min(1, "Categoria é obrigatória"),
+  date: z.string().min(1, "Data é obrigatória"),
   isRecurring: z.boolean().default(false),
   recurringInterval: z.enum(["daily", "weekly", "monthly", "yearly"]).optional().nullable()
 });
+
+const INTERVAL_LABELS: Record<string, string> = {
+  daily: "diário",
+  weekly: "semanal",
+  monthly: "mensal",
+  yearly: "anual",
+};
 
 function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenChange: (o: boolean) => void }) {
   const queryClient = useQueryClient();
@@ -50,24 +57,23 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListTransactionsQueryKey() });
         queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-        toast({ title: "Transaction added successfully!" });
+        toast({ title: "Transação adicionada com sucesso!" });
         onOpenChange(false);
         form.reset();
       },
       onError: () => {
-        toast({ title: "Failed to add transaction", variant: "destructive" });
+        toast({ title: "Erro ao adicionar transação", variant: "destructive" });
       }
     });
   };
 
   const selectedType = form.watch("type");
-  const isRecurring = form.watch("isRecurring");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Transaction</DialogTitle>
+          <DialogTitle>Adicionar Transação</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -76,16 +82,16 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Type</FormLabel>
+                  <FormLabel>Tipo</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="expense">Expense</SelectItem>
-                      <SelectItem value="income">Income</SelectItem>
+                      <SelectItem value="expense">Despesa</SelectItem>
+                      <SelectItem value="income">Receita</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -98,7 +104,7 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount</FormLabel>
+                  <FormLabel>Valor (R$)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" {...field} />
                   </FormControl>
@@ -112,9 +118,9 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input placeholder="Coffee, Salary, etc." {...field} />
+                    <Input placeholder="Ex.: Almoço, Salário..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,11 +132,11 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>Categoria</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Selecione a categoria" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -149,7 +155,7 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
               name="date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date</FormLabel>
+                  <FormLabel>Data</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -157,11 +163,9 @@ function AddTransactionDialog({ open, onOpenChange }: { open: boolean, onOpenCha
                 </FormItem>
               )}
             />
-
-            {/* Note: In a fuller implementation, add the isRecurring and interval fields */}
             
             <Button type="submit" className="w-full" disabled={createTx.isPending}>
-              {createTx.isPending ? "Saving..." : "Save Transaction"}
+              {createTx.isPending ? "Salvando..." : "Salvar Transação"}
             </Button>
           </form>
         </Form>
@@ -186,7 +190,7 @@ export default function Transactions() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListTransactionsQueryKey() });
         queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-        toast({ title: "Transaction deleted" });
+        toast({ title: "Transação excluída" });
       }
     });
   };
@@ -200,11 +204,11 @@ export default function Transactions() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold">Transactions</h1>
-          <p className="text-muted-foreground mt-1">Manage your income and expenses.</p>
+          <h1 className="text-3xl md:text-4xl font-display font-bold">Transações</h1>
+          <p className="text-muted-foreground mt-1">Gerencie suas receitas e despesas.</p>
         </div>
         <Button onClick={() => setIsAddOpen(true)} className="rounded-full shadow-lg shadow-primary/20">
-          <Plus className="h-4 w-4 mr-2" /> Add Transaction
+          <Plus className="h-4 w-4 mr-2" /> Adicionar Transação
         </Button>
       </div>
 
@@ -214,7 +218,7 @@ export default function Transactions() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
-                placeholder="Search transactions..." 
+                placeholder="Buscar transações..." 
                 className="pl-9"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -222,12 +226,12 @@ export default function Transactions() {
             </div>
             <Select value={filterType} onValueChange={(val: any) => setFilterType(val)}>
               <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder="Filter by type" />
+                <SelectValue placeholder="Filtrar por tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="income">Income</SelectItem>
-                <SelectItem value="expense">Expenses</SelectItem>
+                <SelectItem value="all">Todos os tipos</SelectItem>
+                <SelectItem value="income">Receitas</SelectItem>
+                <SelectItem value="expense">Despesas</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -247,11 +251,11 @@ export default function Transactions() {
                         <p className="font-medium text-foreground">{tx.description}</p>
                         {tx.isRecurring && (
                           <Badge variant="secondary" className="text-[10px] py-0 h-4">
-                            <CalendarClock className="h-3 w-3 mr-1" /> {tx.recurringInterval}
+                            <CalendarClock className="h-3 w-3 mr-1" /> {tx.recurringInterval ? INTERVAL_LABELS[tx.recurringInterval] ?? tx.recurringInterval : "recorrente"}
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground">{tx.category} • {formatDate(tx.date)}</p>
+                      <p className="text-xs text-muted-foreground">{translateCategory(tx.category)} • {formatDate(tx.date)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -271,7 +275,7 @@ export default function Transactions() {
               ))
             ) : (
               <div className="text-center py-12 text-muted-foreground">
-                No transactions found.
+                Nenhuma transação encontrada.
               </div>
             )}
           </div>

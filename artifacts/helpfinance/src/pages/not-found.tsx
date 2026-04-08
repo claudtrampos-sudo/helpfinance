@@ -13,13 +13,13 @@ export default function NotFound() {
             <AlertCircle className="h-12 w-12 text-destructive relative z-10" />
             <div className="absolute inset-0 bg-destructive/20 rounded-full animate-ping" />
           </div>
-          <h1 className="text-3xl font-display font-bold mb-2">404 - Page Not Found</h1>
+          <h1 className="text-3xl font-display font-bold mb-2">404 - Página não encontrada</h1>
           <p className="text-muted-foreground mb-8 text-lg">
-            Looks like this page got lost in the financial records. Let's get you back on track.
+            Parece que essa página se perdeu nos registros financeiros. Vamos te colocar de volta nos trilhos.
           </p>
           <Link href="/">
             <Button size="lg" className="rounded-full shadow-lg shadow-primary/20 w-full sm:w-auto font-medium">
-              Return to Dashboard
+              Voltar ao Painel
             </Button>
           </Link>
         </CardContent>

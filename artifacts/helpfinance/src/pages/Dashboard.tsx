@@ -1,6 +1,6 @@
 import { useGetDashboardSummary, useGetMonthlyTrend, useGetCategoryBreakdown, useListTransactions } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, translateCategory } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { ArrowUpRight, ArrowDownRight, Lightbulb, PiggyBank, Target, Wallet, Activity } from "lucide-react";
@@ -16,7 +16,7 @@ export default function Dashboard() {
   if (isSummaryLoading || isTrendLoading || isBreakdownLoading || isTxLoading) {
     return (
       <div className="space-y-6 animate-in fade-in zoom-in duration-500">
-        <h1 className="text-3xl font-display font-bold">Overview</h1>
+        <h1 className="text-3xl font-display font-bold">Visão Geral</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <Skeleton key={i} className="h-32 rounded-xl" />
@@ -37,12 +37,12 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-            Welcome back! 👋
+            Bem-vindo de volta!
           </h1>
-          <p className="text-muted-foreground mt-1">Here's what's happening with your money.</p>
+          <p className="text-muted-foreground mt-1">Veja o que está acontecendo com o seu dinheiro.</p>
         </div>
         <Link href="/transactions">
-          <Button className="rounded-full shadow-lg shadow-primary/20">Add Transaction</Button>
+          <Button className="rounded-full shadow-lg shadow-primary/20">Adicionar Transação</Button>
         </Link>
       </div>
 
@@ -56,7 +56,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-sm font-medium text-muted-foreground">Total Balance</p>
+                <p className="text-sm font-medium text-muted-foreground">Saldo Total</p>
                 <h3 className="text-3xl font-display font-bold text-foreground mt-1">
                   {formatCurrency(summary.totalBalance)}
                 </h3>
@@ -72,7 +72,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-sm font-medium text-muted-foreground">Monthly Income</p>
+                <p className="text-sm font-medium text-muted-foreground">Receita Mensal</p>
                 <h3 className="text-2xl font-display font-bold text-foreground mt-1">
                   {formatCurrency(summary.monthlyIncome)}
                 </h3>
@@ -88,7 +88,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-sm font-medium text-muted-foreground">Monthly Expenses</p>
+                <p className="text-sm font-medium text-muted-foreground">Gastos Mensais</p>
                 <h3 className="text-2xl font-display font-bold text-foreground mt-1">
                   {formatCurrency(summary.monthlyExpenses)}
                 </h3>
@@ -103,11 +103,11 @@ export default function Dashboard() {
                   <PiggyBank className="h-5 w-5 text-blue-600" />
                 </div>
                 <div className="text-sm font-bold text-blue-600 bg-blue-500/10 px-2 py-1 rounded-lg">
-                  {summary.savingsRate}% Rate
+                  {summary.savingsRate}% de economia
                 </div>
               </div>
               <div className="mt-4">
-                <p className="text-sm font-medium text-muted-foreground">Savings</p>
+                <p className="text-sm font-medium text-muted-foreground">Poupança</p>
                 <h3 className="text-2xl font-display font-bold text-foreground mt-1">
                   {formatCurrency(summary.monthlyIncome - summary.monthlyExpenses)}
                 </h3>
@@ -127,7 +127,7 @@ export default function Dashboard() {
               <Lightbulb className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h4 className="font-display font-bold text-lg mb-1">Coach Insight</h4>
+              <h4 className="font-display font-bold text-lg mb-1">Dica do Assistente</h4>
               <p className="text-secondary-foreground/90 leading-relaxed">
                 {summary.aiInsight}
               </p>
@@ -139,8 +139,8 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 border-none shadow-md">
           <CardHeader>
-            <CardTitle>Cash Flow</CardTitle>
-            <CardDescription>Income vs Expenses over time</CardDescription>
+            <CardTitle>Fluxo de Caixa</CardTitle>
+            <CardDescription>Receitas vs Despesas ao longo do tempo</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] w-full">
@@ -159,19 +159,19 @@ export default function Dashboard() {
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} tickFormatter={(val) => `$${val}`} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} tickFormatter={(val) => `R$${val}`} />
                     <Tooltip 
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
                       formatter={(value: number) => [formatCurrency(value), undefined]}
                     />
-                    <Area type="monotone" dataKey="income" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorIncome)" />
-                    <Area type="monotone" dataKey="expenses" stroke="hsl(var(--destructive))" strokeWidth={3} fillOpacity={1} fill="url(#colorExpense)" />
+                    <Area type="monotone" dataKey="income" name="Receita" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorIncome)" />
+                    <Area type="monotone" dataKey="expenses" name="Despesas" stroke="hsl(var(--destructive))" strokeWidth={3} fillOpacity={1} fill="url(#colorExpense)" />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-2">
                   <Activity className="h-8 w-8 opacity-20" />
-                  <p>Not enough data</p>
+                  <p>Dados insuficientes</p>
                 </div>
               )}
             </div>
@@ -180,8 +180,8 @@ export default function Dashboard() {
 
         <Card className="border-none shadow-md">
           <CardHeader>
-            <CardTitle>Spending</CardTitle>
-            <CardDescription>By category this month</CardDescription>
+            <CardTitle>Gastos por Categoria</CardTitle>
+            <CardDescription>Distribuição das despesas do mês</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[250px] w-full">
@@ -207,7 +207,7 @@ export default function Dashboard() {
               ) : (
                 <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-2">
                   <PieChart className="h-8 w-8 opacity-20" />
-                  <p>No expenses yet</p>
+                  <p>Nenhuma despesa ainda</p>
                 </div>
               )}
             </div>
@@ -232,11 +232,11 @@ export default function Dashboard() {
       <Card className="border-none shadow-md">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your latest transactions</CardDescription>
+            <CardTitle>Atividade Recente</CardTitle>
+            <CardDescription>Suas últimas transações</CardDescription>
           </div>
           <Link href="/transactions">
-            <Button variant="ghost" className="text-primary">View All</Button>
+            <Button variant="ghost" className="text-primary">Ver Todas</Button>
           </Link>
         </CardHeader>
         <CardContent>
@@ -250,7 +250,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground">{tx.description}</p>
-                      <p className="text-xs text-muted-foreground">{tx.category} • {new Date(tx.date).toLocaleDateString()}</p>
+                      <p className="text-xs text-muted-foreground">{translateCategory(tx.category)} • {new Date(tx.date).toLocaleDateString('pt-BR')}</p>
                     </div>
                   </div>
                   <div className={`font-bold ${tx.type === 'income' ? 'text-emerald-500' : 'text-foreground'}`}>
@@ -260,7 +260,7 @@ export default function Dashboard() {
               ))
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                No transactions yet. Add one to get started!
+                Nenhuma transação ainda. Adicione uma para começar!
               </div>
             )}
           </div>

@@ -4,25 +4,25 @@ import { db, userProfileTable, userBadgesTable } from "@workspace/db";
 const router = Router();
 
 const ALL_BADGES = [
-  { id: "first_transaction", name: "First Step", description: "Add your first transaction", icon: "Star", xpReward: 50 },
-  { id: "week_streak", name: "Week Warrior", description: "Maintain a 7-day activity streak", icon: "Flame", xpReward: 100 },
-  { id: "month_streak", name: "Monthly Master", description: "Maintain a 30-day activity streak", icon: "Trophy", xpReward: 500 },
-  { id: "saver_100", name: "Smart Saver", description: "Save $100 in a single month", icon: "PiggyBank", xpReward: 200 },
-  { id: "goal_created", name: "Dream Builder", description: "Set your first financial goal", icon: "Target", xpReward: 75 },
-  { id: "goal_completed", name: "Goal Crusher", description: "Complete a financial goal", icon: "Award", xpReward: 300 },
-  { id: "budget_master", name: "Budget Master", description: "Stay under budget for 3 months", icon: "ShieldCheck", xpReward: 250 },
-  { id: "investor", name: "Investor", description: "Log an investment income", icon: "TrendingUp", xpReward: 150 },
-  { id: "expense_tracker_10", name: "Detail Oriented", description: "Log 10 transactions", icon: "ClipboardList", xpReward: 100 },
-  { id: "expense_tracker_50", name: "Finance Enthusiast", description: "Log 50 transactions", icon: "BarChart2", xpReward: 300 },
+  { id: "first_transaction", name: "Primeiro Passo", description: "Adicione sua primeira transação", icon: "Star", xpReward: 50 },
+  { id: "week_streak", name: "Guerreiro Semanal", description: "Mantenha uma sequência de 7 dias", icon: "Flame", xpReward: 100 },
+  { id: "month_streak", name: "Mestre Mensal", description: "Mantenha uma sequência de 30 dias", icon: "Trophy", xpReward: 500 },
+  { id: "saver_100", name: "Poupador Inteligente", description: "Poupe R$ 100 em um único mês", icon: "PiggyBank", xpReward: 200 },
+  { id: "goal_created", name: "Sonhador Realizador", description: "Defina sua primeira meta financeira", icon: "Target", xpReward: 75 },
+  { id: "goal_completed", name: "Conquistador de Metas", description: "Conclua uma meta financeira", icon: "Award", xpReward: 300 },
+  { id: "budget_master", name: "Mestre do Orçamento", description: "Fique abaixo do orçamento por 3 meses", icon: "ShieldCheck", xpReward: 250 },
+  { id: "investor", name: "Investidor", description: "Registre uma receita de investimento", icon: "TrendingUp", xpReward: 150 },
+  { id: "expense_tracker_10", name: "Atento aos Detalhes", description: "Registre 10 transações", icon: "ClipboardList", xpReward: 100 },
+  { id: "expense_tracker_50", name: "Entusiasta Financeiro", description: "Registre 50 transações", icon: "BarChart2", xpReward: 300 },
 ];
 
 const LEVEL_NAMES = [
-  "Beginner",
-  "Saver",
-  "Budgeter",
-  "Investor",
-  "Wealth Builder",
-  "Financial Expert",
+  "Iniciante",
+  "Poupador",
+  "Orçamentista",
+  "Investidor",
+  "Construtor de Riqueza",
+  "Especialista Financeiro",
 ];
 
 function getLevelName(level: number): string {

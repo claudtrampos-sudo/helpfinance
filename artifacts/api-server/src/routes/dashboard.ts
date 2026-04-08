@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { db, transactionsTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
 import { GetDashboardSummaryQueryParams, GetCategoryBreakdownQueryParams } from "@workspace/api-zod";
 
 const router = Router();
@@ -23,6 +22,26 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Other Income": "#3b82f6",
 };
 
+const CATEGORY_PT: Record<string, string> = {
+  Housing: "Moradia",
+  "Food & Dining": "Alimentação",
+  Transportation: "Transporte",
+  Healthcare: "Saúde",
+  Entertainment: "Lazer",
+  Shopping: "Compras",
+  Education: "Educação",
+  Utilities: "Utilidades",
+  Subscriptions: "Assinaturas",
+  Travel: "Viagem",
+  Savings: "Poupança",
+  Salary: "Salário",
+  Freelance: "Freelance",
+  Investments: "Investimentos",
+  "Other Income": "Outras Receitas",
+};
+
+const MONTH_PT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
 router.get("/summary", async (req, res) => {
   const query = GetDashboardSummaryQueryParams.safeParse(req.query);
   const month = query.success && query.data.month ? query.data.month : new Date().toISOString().substring(0, 7);
@@ -38,31 +57,28 @@ router.get("/summary", async (req, res) => {
     .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
-  const totalBalance = allTx
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + parseFloat(t.amount), 0) -
-    allTx
-    .filter((t) => t.type === "expense")
-    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+  const totalBalance =
+    allTx.filter((t) => t.type === "income").reduce((sum, t) => sum + parseFloat(t.amount), 0) -
+    allTx.filter((t) => t.type === "expense").reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
   const savingsRate = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpenses) / monthlyIncome) * 100 : 0;
 
-  // Top expense category
   const expenseByCategory: Record<string, number> = {};
   for (const t of monthTx.filter((t) => t.type === "expense")) {
     expenseByCategory[t.category] = (expenseByCategory[t.category] ?? 0) + parseFloat(t.amount);
   }
-  const topExpenseCategory =
-    Object.entries(expenseByCategory).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "None";
+  const topExpenseCategoryEn = Object.entries(expenseByCategory).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  const topExpenseCategory = topExpenseCategoryEn ? (CATEGORY_PT[topExpenseCategoryEn] ?? topExpenseCategoryEn) : "Nenhuma";
 
-  // AI insight
-  let aiInsight = "You're doing great! Keep tracking your expenses to stay on top of your finances.";
+  const formatBRL = (val: number) => val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  let aiInsight = "Continue assim! Rastreie suas despesas para manter o controle das suas finanças.";
   if (savingsRate > 20) {
-    aiInsight = `Excellent work! Your savings rate of ${savingsRate.toFixed(1)}% is above average. Consider investing the surplus.`;
+    aiInsight = `Excelente! Sua taxa de poupança é de ${savingsRate.toFixed(1)}%, acima da média. Considere investir o excedente.`;
   } else if (savingsRate < 0) {
-    aiInsight = `This month your expenses exceed income by $${Math.abs(monthlyExpenses - monthlyIncome).toFixed(2)}. Review your ${topExpenseCategory} spending.`;
-  } else if (topExpenseCategory !== "None") {
-    aiInsight = `Your biggest expense category is ${topExpenseCategory}. Small reductions there could boost your savings significantly.`;
+    aiInsight = `Atenção! Suas despesas superam sua receita em ${formatBRL(Math.abs(monthlyExpenses - monthlyIncome))} este mês. Revise seus gastos com ${topExpenseCategory}.`;
+  } else if (topExpenseCategoryEn) {
+    aiInsight = `Sua maior categoria de gastos é **${topExpenseCategory}**. Pequenas reduções ali podem aumentar sua poupança significativamente.`;
   }
 
   res.json({
@@ -91,7 +107,8 @@ router.get("/monthly-trend", async (_req, res) => {
     const income = monthTx.filter((t) => t.type === "income").reduce((s, t) => s + parseFloat(t.amount), 0);
     const expenses = monthTx.filter((t) => t.type === "expense").reduce((s, t) => s + parseFloat(t.amount), 0);
     const savings = income - expenses;
-    const label = new Date(month + "-01").toLocaleString("en-US", { month: "short" });
+    const monthIndex = parseInt(month.split("-")[1]) - 1;
+    const label = MONTH_PT[monthIndex];
     return {
       month: label,
       income: Math.round(income * 100) / 100,
@@ -120,7 +137,7 @@ router.get("/category-breakdown", async (req, res) => {
   const breakdown = Object.entries(byCategory)
     .sort((a, b) => b[1] - a[1])
     .map(([category, amount]) => ({
-      category,
+      category: CATEGORY_PT[category] ?? category,
       amount: Math.round(amount * 100) / 100,
       percentage: total > 0 ? Math.round((amount / total) * 1000) / 10 : 0,
       color: CATEGORY_COLORS[category] ?? "#6b7280",

@@ -15,10 +15,10 @@ type Message = {
 };
 
 const SUGGESTIONS = [
-  "How much did I spend this month?",
-  "Am I on track to meet my goals?",
-  "Where can I save money?",
-  "What is my biggest expense category?"
+  "Quanto gastei este mês?",
+  "Estou no caminho certo para minhas metas?",
+  "Onde posso economizar dinheiro?",
+  "Qual é minha maior categoria de gastos?"
 ];
 
 export default function AiChat() {
@@ -26,7 +26,7 @@ export default function AiChat() {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hi! I'm your HelpFinance AI Coach. I analyze your spending, goals, and habits. How can I help you today?"
+      content: "Olá! Sou seu Assistente Financeiro HelpFinance. Analiso seus gastos, metas e hábitos. Como posso te ajudar hoje?"
     }
   ]);
   const [input, setInput] = useState("");
@@ -41,7 +41,6 @@ export default function AiChat() {
     setMessages(prev => [...prev, userMsg]);
     setInput("");
 
-    // Create a context string from the last few messages
     const context = messages.slice(-4).map(m => `${m.role}: ${m.content}`).join("\n");
 
     chatMutation.mutate({ data: { message: text, context } }, {
@@ -56,7 +55,7 @@ export default function AiChat() {
         setMessages(prev => [...prev, {
           id: Date.now().toString(),
           role: "assistant",
-          content: "I'm having trouble connecting right now. Please try again later."
+          content: "Tive um problema ao me conectar. Por favor, tente novamente mais tarde."
         }]);
       }
     });
@@ -72,9 +71,9 @@ export default function AiChat() {
     <div className="flex flex-col h-[calc(100vh-8rem)] max-h-[800px] animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="mb-6">
         <h1 className="text-3xl font-display font-bold flex items-center gap-2">
-          <Bot className="h-8 w-8 text-primary" /> AI Financial Coach
+          <Bot className="h-8 w-8 text-primary" /> Assistente Financeiro IA
         </h1>
-        <p className="text-muted-foreground mt-1">Ask questions about your finances and get personalized advice.</p>
+        <p className="text-muted-foreground mt-1">Faça perguntas sobre suas finanças e receba orientações personalizadas.</p>
       </div>
 
       <Card className="flex-1 flex flex-col border-none shadow-md overflow-hidden bg-card/50 backdrop-blur-sm">
@@ -108,7 +107,7 @@ export default function AiChat() {
                   <AvatarFallback className="bg-transparent"><Bot className="h-5 w-5" /></AvatarFallback>
                 </Avatar>
                 <div className="rounded-2xl p-4 bg-card border rounded-tl-sm flex items-center gap-2 text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Thinking...
+                  <Loader2 className="h-4 w-4 animate-spin" /> Pensando...
                 </div>
               </div>
             )}
@@ -137,7 +136,7 @@ export default function AiChat() {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about your spending..."
+              placeholder="Pergunte sobre seus gastos..."
               className="rounded-full bg-card"
               disabled={chatMutation.isPending}
             />

@@ -1,6 +1,5 @@
 import { useGetGamificationProfile, useListBadges } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Flame, Star, Medal, Zap } from "lucide-react";
 import { Badge as UiBadge } from "@/components/ui/badge";
@@ -26,11 +25,11 @@ export default function Gamification() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h1 className="text-3xl md:text-4xl font-display font-bold">Your Journey</h1>
-        <p className="text-muted-foreground mt-1">Level up your financial habits.</p>
+        <h1 className="text-3xl md:text-4xl font-display font-bold">Sua Jornada</h1>
+        <p className="text-muted-foreground mt-1">Evolua seus hábitos financeiros.</p>
       </div>
 
-      {/* Hero Stats */}
+      {/* Estatísticas principais */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="border-none shadow-md bg-gradient-to-br from-primary to-emerald-600 text-primary-foreground md:col-span-2 relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
@@ -40,16 +39,16 @@ export default function Gamification() {
             <div className="flex flex-col h-full justify-between gap-8">
               <div>
                 <UiBadge className="bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground border-none px-3 py-1 text-sm mb-4">
-                  Level {profile.level}
+                  Nível {profile.level}
                 </UiBadge>
                 <h2 className="text-4xl font-display font-bold mb-2">{profile.levelName}</h2>
-                <p className="text-primary-foreground/80">You're making great progress towards financial freedom.</p>
+                <p className="text-primary-foreground/80">Você está progredindo rumo à liberdade financeira.</p>
               </div>
               
               <div className="space-y-2">
                 <div className="flex justify-between text-sm font-medium">
-                  <span>{profile.xp.toLocaleString()} XP</span>
-                  <span>{totalXpForNextLevel.toLocaleString()} XP</span>
+                  <span>{profile.xp.toLocaleString('pt-BR')} XP</span>
+                  <span>{totalXpForNextLevel.toLocaleString('pt-BR')} XP</span>
                 </div>
                 <div className="h-4 bg-primary-foreground/20 rounded-full overflow-hidden backdrop-blur-sm">
                   <div 
@@ -58,7 +57,7 @@ export default function Gamification() {
                   />
                 </div>
                 <p className="text-xs text-primary-foreground/70 text-right">
-                  {profile.xpToNextLevel.toLocaleString()} XP to next level
+                  {profile.xpToNextLevel.toLocaleString('pt-BR')} XP para o próximo nível
                 </p>
               </div>
             </div>
@@ -72,21 +71,21 @@ export default function Gamification() {
             </div>
             <div>
               <div className="text-5xl font-display font-bold">{profile.streak}</div>
-              <div className="font-medium text-white/80 uppercase tracking-widest mt-1 text-sm">Day Streak</div>
+              <div className="font-medium text-white/80 uppercase tracking-widest mt-1 text-sm">Dias Consecutivos</div>
             </div>
-            <p className="text-sm text-white/90">Keep logging in to earn streak bonuses!</p>
+            <p className="text-sm text-white/90">Continue acessando para ganhar bônus de sequência!</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Badges */}
+      {/* Conquistas */}
       <Card className="border-none shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Medal className="h-5 w-5 text-primary" /> Achievements
+            <Medal className="h-5 w-5 text-primary" /> Conquistas
           </CardTitle>
           <CardDescription>
-            Complete tasks to earn badges and XP. You have earned {profile.earnedBadges.length} of {badges?.length} badges.
+            Complete tarefas para ganhar medalhas e XP. Você conquistou {profile.earnedBadges.length} de {badges?.length} medalhas.
           </CardDescription>
         </CardHeader>
         <CardContent>
